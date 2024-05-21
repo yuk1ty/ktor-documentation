@@ -70,7 +70,7 @@ to the standard output stream (`STDOUT`).
 
 ## Multiplatform
 
-In [multiplatform projects](client-create-multiplatform-application.md), you can specify
+In [multiplatform projects](client-create-multiplatform-application.topic), you can specify
 a [custom logger](#custom_logger), such as [Napier](https://github.com/AAkira/Napier).
 
 ## Add dependencies {id="add_dependencies"}

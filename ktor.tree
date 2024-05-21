@@ -260,7 +260,7 @@
         <toc-element toc-title="Getting started with Ktor Client">
             <toc-element topic="client-create-new-application.topic"
                          accepts-web-file-names="getting-started-ktor-client.html"/>
-            <toc-element topic="client-create-multiplatform-application.md"
+            <toc-element topic="client-create-multiplatform-application.topic"
                          accepts-web-file-names="getting-started-ktor-client-multiplatform-mobile.html"/>
         </toc-element>
         <toc-element toc-title="Developing applications">

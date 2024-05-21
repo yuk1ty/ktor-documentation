@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="client-create-multiplatform-application" title="Create a cross-platform mobile application">
+
+    <show-structure for="chapter" depth="2"/>
+    <tldr>
+        <var name="example_name" value="tutorial-client-kmp"/>
+        <include from="lib.topic" element-id="download_example"/>
+    </tldr>
+    <link-summary>
+        Learn how to create a Kotlin Multiplatform Mobile application.
+    </link-summary>
+    <p>
+        In this tutorial, you will learn how to create a Kotlin Multiplatform (KMP) application with a Ktor client using
+        Android Studio.
+    </p>
+    <include from="client-engines.md" element-id="newmm-note"/>
+    <chapter title="Prerequisites" id="prerequisites">
+        <p>Before starting this tutorial, you need to set up an environment for cross-platform mobile development by
+            installing the necessary tools on a suitable operating system. Learn how to do this from
+            the <a href="https://kotlinlang.org/docs/multiplatform-mobile-setup.html">Set up an environment</a> section.
+        </p>
+        <note>
+            <p>Completing certain steps in this tutorial, such as writing iOS-specific code and running an iOS
+                application, requires a macOS.</p>
+        </note>
+    </chapter>
+    <chapter title="Create a new project" id="new-project">
+        <p>To create a new Kotlin Multiplatform project, follow the steps below:</p>
+        <procedure id="new-project-steps">
+            <step>
+                Open the <a href="https://kmp.jetbrains.com/">Kotlin Multiplatform Wizard</a>.
+            </step>
+            <step>
+                On the
+                <control>New project</control>
+                tab, change the project name to
+                <path>KtorKMP</path>
+                and the project ID to
+                <path>org.example.ktor</path>
+                .
+            </step>
+            <step>
+                Ensure that the
+                <control>Android</control>
+                and
+                <control>iOS</control>
+                options are selected.
+            </step>
+            <step>
+                <p>
+                    For iOS, select the
+                    <control>Do not share UI</control>
+                    option to keep the UI native.
+                </p>
+                <img src="client_create_multiplatform_applciation_kmp_wizard.png"
+                     alt="Kotlin Multiplatform Wizard with Project Name KtorKMP" border-effect="line"
+                     width="400"/>
+            </step>
+            <step>
+                Click the
+                <control>Download</control>
+                button to generate and download your project.
+            </step>
+            <step>
+                <p>Unpack the ZIP archive into a folder of the same name. To do that from a terminal, use the following
+                    command from the folder where you downloaded the project:</p>
+                <tabs>
+                    <tab title="macOS" group-key="macOS" id="unpack-macos">
+                        <code-block lang="console">
+                            unzip KtorKMP.zip -d KtorKMP
+                        </code-block>
+                    </tab>
+                    <tab title="Windows" group-key="windows" id="unpack-windows">
+                        <code-block lang="console">
+                            tar -xf KtorKMP.zip
+                        </code-block>
+                    </tab>
+                </tabs>
+            </step>
+        </procedure>
+    </chapter>
+    <chapter title="Configure build scripts" id="build-script">
+        <chapter title="Add Ktor dependencies" id="ktor-dependencies">
+            <p>To use the Ktor client in your project, you need to add a client
+                dependency and an <a href="client-engines.md">engine dependency</a> for each required platform, namely:
+            </p>
+            <list>
+                <li>
+                    <code>ktor-client-core</code> allows you to use the Ktor client in common code.
+                </li>
+                <li>
+                    <code>ktor-client-okhttp</code> allows you to use the OkHttp engine to process network requests on
+                    Android.
+                </li>
+                <li>
+                    <code>ktor-client-darwin</code> allows you to use the Darwin engine on iOS.
+                </li>
+            </list>
+            <tip>
+                <p>To use a different engine, see what <a href="client-engines.md" anchor="jvm-android">other
+                    engine types</a> are supported by Ktor.</p>
+            </tip>
+            <procedure>
+                <step>
+                    <p>
+                        Open the
+                        <path>gradle/libs.versions.toml</path>
+                        file and specify the Ktor version:
+                    </p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/gradle/libs.versions.toml"
+                                include-lines="1,5"/>
+                    <include from="client-create-new-application.topic" element-id="eap-note"/>
+                </step>
+                <step>
+                    <p>In the same file, define the Ktor client and engine libraries:</p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/gradle/libs.versions.toml"
+                                include-lines="11,19-21"/>
+                </step>
+                <step>
+                    <p>
+                        Open the
+                        <path>shared/build.gradle.kts</path>
+                        file and add dependencies to the <code>sourceSets</code> section:
+                    </p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/shared/build.gradle.kts"
+                                include-lines="26-28,30-39,40"/>
+                </step>
+            </procedure>
+        </chapter>
+        <chapter title="Add coroutines" id="coroutines">
+            <p>To use coroutines in <a anchor="android-activity">Android code</a>, you need to add <code>kotlinx.coroutines</code>
+                to your project:</p>
+            <procedure>
+                <step>
+                    <p>Open the
+                        <path>gradle/libs.versions.toml</path>
+                        file and specify the coroutines version and
+                        libraries:
+                    </p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/gradle/libs.versions.toml"
+                                include-lines="1,4,10-11,22-23"/>
+                </step>
+                <step>
+                    <p>Open the
+                        <path>shared/build.gradle.kts</path>
+                        file and add the <code>kotlinx-coroutines-core</code>
+                        dependency to the <code>commonMain</code> source set:
+                    </p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/shared/build.gradle.kts"
+                                include-lines="27-30"/>
+                </step>
+                <step>
+                    <p>Open the
+                        <path>androidApp/build.gradle.kts</path>
+                        file and add the <code>kotlinx-coroutines-android</code>
+                        dependency:
+                    </p>
+                    <code-block lang="kotlin" src="snippets/tutorial-client-kmm/androidApp/build.gradle.kts"
+                                include-lines="41,47,49"/>
+                </step>
+                <step>
+                    <p>Click
+                        <control>Sync Now</control>
+                        in the top right corner of the file to install the added dependencies.
+                    </p>
+                </step>
+            </procedure>
+        </chapter>
+    </chapter>
+    <chapter title="Update your application" id="code">
+        <chapter title="Shared code" id="shared-code">
+            <p>To update code shared between Android and iOS, do the following:</p>
+            <procedure>
+                <step>
+                    Navigate to
+                    <path>shared/src/commonMain/kotlin</path>
+                    and open the
+                    <path>Greeting.kt</path>
+                    file.
+                </step>
+                <step>
+                    <p>
+                        Add the following code to the <code>Greeting</code> class:
+                    </p>
+                    <code-block lang="kotlin"
+                                src="snippets/tutorial-client-kmm/shared/src/commonMain/kotlin/com/example/kmmktor/Greeting.kt"/>
+                    <list>
+                        <li>To create the HTTP client, the <code>HttpClient</code> constructor is called.</li>
+                        <li>The suspending <code>greeting</code> function is used to make a <a
+                                href="client-requests.md">request</a> and receive the body of
+                            a <a href="client-responses.md">response</a> as a string value.
+                        </li>
+                    </list>
+                </step>
+            </procedure>
+        </chapter>
+        <chapter title="Android code" id="android-activity">
+            <p>To call the suspending <code>greeting</code> function from the Android code, we'll be
+                using <a
+                        href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary#rememberCoroutineScope(kotlin.Function0)">rememberCoroutineScope</a>.
+            </p>
+            <procedure>
+                <step>
+                    Navigate to
+                    <path>composeApp/src/androidMain/kotlin/org/example/ktor</path>
+                    and open the
+                    <path>MainActivity.kt</path>
+                    file.
+                </step>
+                <step>
+                    <p>Replace the existing code with the following implementation:</p>
+                    <code-block lang="kotlin"
+                                src="snippets/tutorial-client-kmm/androidApp/src/main/java/com/example/kmmktor/android/MainActivity.kt"/>
+                    <p>Inside the created scope, you can call the shared <code>greeting</code> function and handle
+                        possible exceptions.</p>
+                </step>
+            </procedure>
+        </chapter>
+        <chapter title="iOS code" id="ios-view">
+            <procedure>
+                <step>
+                    Navigate to
+                    <path>iosApp/iosApp</path>
+                    and open the
+                    <path>iOSApp.swift</path>
+                    file.
+                </step>
+                <step>
+                    <p>Update the entry point for the application.</p>
+                    <code-block lang="Swift" src="snippets/tutorial-client-kmm/iosApp/iosApp/iOSApp.swift"/>
+                </step>
+                <step>
+                    <p>
+                        Open the
+                        <path>ContentView.swift</path>
+                        file in the same folder and update the contents of it in the following way:
+                    </p>
+                    <code-block lang="Swift" src="snippets/tutorial-client-kmm/iosApp/iosApp/ContentView.swift"/>
+                    <p>On iOS, the <code>greeting</code> suspending function is available as a function with a callback.
+                    </p>
+                </step>
+            </procedure>
+        </chapter>
+    </chapter>
+    <chapter title="Enable internet access on Android" id="android-internet">
+        <p>For this code to work on Android, it is necessary to enable internet access.</p>
+        <procedure>
+            <step>
+                Navigate to
+                <path>composeApp/src/androidMain</path>
+                and open the
+                <path>AndroidManifest.xml</path>
+                file.
+            </step>
+            <step>
+                <p>
+                    Use the <code>uses-permission</code> element to enable the required permission:
+                </p>
+                <code-block lang="xml"><![CDATA[
+                    <manifest>
+                        <uses-permission android:name="android.permission.INTERNET"/>
+                        <application>
+                            ...
+                        </application>
+                    </manifest>
+                ]]></code-block>
+            </step>
+        </procedure>
+    </chapter>
+    <chapter title="Run your application" id="run">
+        <procedure title="Run on Android" id="run-android">
+            <step>
+                In the list of run configurations, select
+                <control>composeApp</control>
+                .
+            </step>
+            <step>
+                <p>
+                    Choose an Android virtual device next to the list of configurations.
+                </p>
+                <p>
+                    If you don't have a device in the list,
+                    <a href="https://developer.android.com/studio/run/managing-avds">
+                        create a new Android virtual device
+                    </a>
+                    .
+                </p>
+            </step>
+            <step>
+                <p>Click
+                    <control>Run</control>
+                    .
+                </p>
+                <p>The simulator should display the received HTML document as plain text.</p>
+                <img src="tutorial_client_kmm_android.png" alt="Android simulator" width="381"/>
+            </step>
+        </procedure>
+        <procedure title="Run on iOS" id="run-ios">
+            <step>
+                Launch Xcode in a separate window. The first time you do this, you may also need to accept the license
+                terms and allow Xcode to perform some necessary initial tasks.
+            </step>
+            <step>
+                <p>
+                    In Android Studio, select
+                    <control>iosApp</control>
+                    in the list of run configurations.
+                </p>
+                <p>
+                    If you don't have an available iOS configuration in the list,
+                    <a href="https://developer.android.com/studio/run/rundebugconfig#creating">
+                        add a new run configuration
+                    </a>
+                    .
+                </p>
+            </step>
+            <step>
+                <p>Click
+                    <control>Run</control>
+                    .
+                </p>
+                <p>The simulator should display the received HTML document as plain text.</p>
+                <img src="tutorial_client_kmm_ios.png" alt="iOS simulator" width="351"/>
+            </step>
+        </procedure>
+
+    </chapter>
+
+</topic>

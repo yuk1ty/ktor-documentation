@@ -88,7 +88,7 @@
                    summary="Create a client application with Ktor.">
                     Create a client application
                 </a>
-                <a href="client-create-multiplatform-application.md"
+                <a href="client-create-multiplatform-application.topic"
                    summary="Create a Kotlin Multiplatform Mobile application and learn how to make requests and receive responses with the Ktor Client.">
                     Create a cross-platform mobile application
                 </a>
